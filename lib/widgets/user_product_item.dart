@@ -22,6 +22,7 @@ class UserProductItem extends StatelessWidget {
               onPressed: () {},
               color: Theme.of(context).primaryColor,
             ),
+            
             IconButton(
               icon: Icon(Icons.delete_outline),
               onPressed: () {},
