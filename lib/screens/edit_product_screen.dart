@@ -79,7 +79,7 @@ class _EditProductScreen extends State<EditProductScreen> {
     }
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     final valid = _form.currentState.validate();
     if (!valid) return;
     _form.currentState.save();
@@ -87,17 +87,18 @@ class _EditProductScreen extends State<EditProductScreen> {
       isLoading = true;
     });
     if (_edittedProduct.id != null) {
-      Provider.of<Products>(context, listen: false)
+      await Provider.of<Products>(context, listen: false)
           .updateProduct(_edittedProduct.id, _edittedProduct);
       Navigator.of(context).pop();
       setState(() {
         isLoading = false;
       });
     } else {
-      Provider.of<Products>(context, listen: false)
-          .addProduct(_edittedProduct)
-          .catchError((error) {
-        return showDialog<Null>(
+      try {
+        await Provider.of<Products>(context, listen: false)
+            .addProduct(_edittedProduct);
+      } catch (error) {
+        showDialog<Null>(
           context: context,
           builder: (ctx) => AlertDialog(
             title: Text('Error Occurred'),
@@ -112,12 +113,12 @@ class _EditProductScreen extends State<EditProductScreen> {
             ],
           ),
         );
-      }).then((_) {
+      } finally {
         setState(() {
           isLoading = false;
         });
         Navigator.of(context).pop();
-      });
+      }
     }
   }
 
@@ -241,7 +242,7 @@ class _EditProductScreen extends State<EditProductScreen> {
                         ),
                         Expanded(
                           child: TextFormField(
-                            initialValue: _initValues['imageUrl'],
+                            initialValue: null,
                             decoration: InputDecoration(labelText: 'Image URL'),
                             keyboardType: TextInputType.url,
                             textInputAction: TextInputAction.done,
@@ -253,10 +254,10 @@ class _EditProductScreen extends State<EditProductScreen> {
                               if (!value.startsWith('http') &&
                                   !value.startsWith('https'))
                                 return 'Please enter a valid URL.';
-                              if (!value.endsWith('.png') &&
+                             /* if (!value.endsWith('.png') &&
                                   !value.endsWith('.jpeg') &&
                                   !value.endsWith('jpg'))
-                                return 'Please enter a valid image URL';
+                                return 'Please enter a valid image URL';*/
                               return null;
                             },
                             onSaved: (value) {
