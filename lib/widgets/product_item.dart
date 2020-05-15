@@ -7,11 +7,12 @@ import 'package:shop_app/screens/product_detail_screen.dart';
 class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final scaffold = Scaffold.of(context);
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
-      child: GridTile(  
+      child: GridTile(
         child: GestureDetector(
           onTap: () {
             Navigator.of(context).pushNamed(ProductDetailScreen.nameRoute,
@@ -26,11 +27,20 @@ class ProductItem extends StatelessWidget {
           backgroundColor: Colors.black87,
           leading: Consumer<Product>(
             builder: (context, product, _) => IconButton(
-              icon: Icon(
-                  product.isFavorite ? Icons.favorite : Icons.favorite_border),
-              color: Theme.of(context).accentColor,
-              onPressed: product.toggleFavoriteStatus,
-            ),
+                icon: Icon(product.isFavorite
+                    ? Icons.favorite
+                    : Icons.favorite_border),
+                color: Theme.of(context).accentColor,
+                onPressed: () async {
+                  try {
+                    await Provider.of<Product>(context, listen: false).toggleFavoriteStatus();
+                  } catch (error) {
+                    scaffold.hideCurrentSnackBar();
+                    scaffold.showSnackBar(SnackBar(
+                      content: Text('Favorite doesn\'t work.', textAlign: TextAlign.center,),
+                    ));
+                  }
+                }),
           ),
           title: Text(
             product.title,

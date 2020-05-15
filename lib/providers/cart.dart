@@ -24,6 +24,10 @@ class Cart with ChangeNotifier {
   int get itemCount {
     return _items.length;
   }
+// AICI AM FACUT EU
+  bool get isEmpty{
+    return _items.isEmpty;
+  }
 
   double get totalAmount {
     var total = 0.0;
