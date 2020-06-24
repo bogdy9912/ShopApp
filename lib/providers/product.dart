@@ -25,7 +25,7 @@ class Product with ChangeNotifier {
     final url = 'https://shopapp-8dee1.firebaseio.com/products/$id.json';
     isFavorite = !isFavorite;
     notifyListeners();
-    
+    try{
     final response = await http.patch(
         url,
         body: json.encode({
@@ -40,7 +40,10 @@ class Product with ChangeNotifier {
       throw HttpException('Favorite not working.');
     }
    
+  }catch(error){
+    isFavorite = !isFavorite;
+    notifyListeners();
+  }
   }
 
-  void setFav() {}
 }
